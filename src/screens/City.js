@@ -62,7 +62,9 @@ const City = ({ route, navigation }) => {
 
       previousDate = currentDate;
     }
+    fiveDaysOnly.shift();
   };
+  
 
   const getWeatherAPI = async () => {
     try {
@@ -84,7 +86,6 @@ const City = ({ route, navigation }) => {
 
   useEffect(() => {
     getWeatherAPI();
-    console.log(forecast)
   }, []);
 
   const listHeaderComponent = () => (
