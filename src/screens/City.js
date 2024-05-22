@@ -25,7 +25,44 @@ const City = ({ route, navigation }) => {
     "Friday",
     "Saturday",
   ];
-  const API_key = "YOUR_API_HERE"; // Replace with your API key
+  const API_key = "YOUR_API_KEY_HERE"; // Replace with your API key
+
+  const setNewData = (json) => {
+     let previousDate = new Date().toISOString().slice(0, 10);
+   
+
+    var minSoFar = Number.MAX_VALUE;
+    var maxSoFar = Number.MIN_VALUE;
+
+    for (let item of json.list) {
+      let currentMinTemp = item.main.temp_min;
+      let currentMaxTemp = item.main.temp_max;
+      if (minSoFar > currentMinTemp) {
+        minSoFar = currentMinTemp;
+      }
+      if (maxSoFar < currentMaxTemp) {
+        maxSoFar = currentMaxTemp;
+      }
+
+      let dtTxt = item.dt_txt;
+      let date = new Date(dtTxt);
+
+      let currentDate = date.toISOString().slice(0, 10);
+      if (currentDate !== previousDate) {
+        const day = dayNames[date.getDay()];
+
+        fiveDaysOnly.push({
+          day: day,
+          maxTemp: maxSoFar,
+          minTemp: minSoFar,
+        });
+        minSoFar = Number.MAX_VALUE;
+        maxSoFar = Number.MIN_VALUE;
+      }
+
+      previousDate = currentDate;
+    }
+  };
 
   const getWeatherAPI = async () => {
     try {
@@ -34,38 +71,7 @@ const City = ({ route, navigation }) => {
       )
         .then((response) => response.json())
         .then((json) => {
-          let previousDate = new Date().toISOString().slice(0, 10);
-
-          var minSoFar = Number.MAX_VALUE;
-          var maxSoFar = Number.MIN_VALUE;
-
-          for (let item of json.list) {
-            let currentMinTemp = item.main.temp_min;
-            let currentMaxTemp = item.main.temp_max;
-            if (minSoFar > currentMinTemp) {
-              minSoFar = currentMinTemp;
-            }
-            if (maxSoFar < currentMaxTemp) {
-              maxSoFar = currentMaxTemp;
-            }
-
-            let dtTxt = item.dt_txt;
-            let date = new Date(dtTxt);
-
-            let currentDate = date.toISOString().slice(0, 10);
-            if (currentDate !== previousDate) {
-              const day = dayNames[date.getDay()];
-              fiveDaysOnly.push({
-                day: day,
-                maxTemp: maxSoFar,
-                minTemp: minSoFar,
-              });
-              minSoFar = Number.MAX_VALUE;
-              maxSoFar = Number.MIN_VALUE;
-            }
-
-            previousDate = currentDate;
-          }
+          setNewData(json);
           setCurrent(json.list[0].main.temp);
         })
         .then(() => {
@@ -78,11 +84,12 @@ const City = ({ route, navigation }) => {
 
   useEffect(() => {
     getWeatherAPI();
+    console.log(forecast)
   }, []);
 
   const listHeaderComponent = () => (
     <View style={styles.separator}>
-      <Text style={styles.txtSep}>Today </Text>
+      <Text style={styles.txtSep}>Tomorrow</Text>
     </View>
   );
 
@@ -100,7 +107,7 @@ const City = ({ route, navigation }) => {
         <Text style={styles.cityName}>{cityName}</Text>
         <Text style={styles.temp}>{current}°C</Text>
         <Image
-          source={require("./weather.jpg")}
+          source={require("../../assets/images/weather.jpg")}
           style={{ width: 130, height: 100 }}
         />
       </View>
@@ -149,7 +156,7 @@ const styles = StyleSheet.create({
     fontSize: 60,
     color: "#ffffff",
     textAlign: "center",
-    textTransform: 'capitalize'
+    textTransform: "capitalize",
   },
   item: {
     backgroundColor: "#77bd42",

@@ -33,7 +33,7 @@ const Home = ({ navigation: { navigate } }) => {
       <View style={styles.title}>
         <Text style={styles.header}>Reservamos Weather API</Text>
         <Image
-          source={require("./reservamos.webp")}
+          source={require("../../assets/images/reservamos.webp")}
           style={{ width: "auto", height: 70 }}
         />
       </View>
