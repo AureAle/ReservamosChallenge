@@ -14,13 +14,20 @@ import {
 const Home = ({ navigation: { navigate } }) => {
   const [cities, setCities] = useState();
   const [city, setCity] = useState("");
+  const [fromCity, setFromCity] = useState('');
+
+
 
   const getCity = () => {
-    fetch(`https://search.reservamos.mx/api/v2/places?q=${city}`)
-      .then((response) => response.json())
+
+    fetch(`https://search.reservamos.mx/api/v2/places?q=${city}&from=${fromCity}`)
+      .then((response) => 
+     response.json())
       .then((json) => {
+        
         setCities(json);
-      });
+      })
+      .catch((error)=>{console.log(error)})
   };
 
   useEffect(() => {
@@ -43,8 +50,18 @@ const Home = ({ navigation: { navigate } }) => {
           style={styles.textInput}
           placeholder="Search for a city"
           value={city}
+          autoCapitalize='none'
           onChangeText={(city) => {
             setCity(city);
+          }}
+        />
+          <TextInput
+          style={styles.textInput}
+          placeholder="Search for a city"
+          value={fromCity}
+          autoCapitalize='none'
+          onChangeText={(city) => {
+            setFromCity(city);
           }}
         />
         <Button title="Search" onPress={getCity} color={"#002674"} />
